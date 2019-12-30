@@ -5,7 +5,7 @@ set -e
 export PYTHONUSERBASE=/config/deps
 
 echo "[Info] Install OpenCV modules into deps"
-PYPI="absl-py==0.1.6 astor==0.7.1 termcolor==1.1.0 gast==0.2.0 keras_applications==1.0.6 keras_preprocessing==1.0.5 numpy==1.18.0"
+PYPI="absl-py astor termcolor gast keras_applications keras_preprocessing numpy"
 
 # shellcheck disable=SC2086
 if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies ${PYPI}; then
@@ -26,5 +26,7 @@ if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies /opencv_pyth
     echo "[Error] Can't install OpenCV package!"
     exit 1
 fi
+
+cp /opencv-4.1.2/build/lib/python3/cv2.cpython-37m-x86_64-linux-gnu.so /config/deps/lib/python3.7/site-packages/cv2.so 
 
 echo "[INFO] OpenCV is installed and ready for use"

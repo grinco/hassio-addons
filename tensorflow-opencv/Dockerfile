@@ -9,13 +9,16 @@ RUN apk update && \
         wget \
         unzip \
         yasm \
-        jpeg-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
         tiff-dev \
+        libwebp-dev \
+        clang-dev \
         ffmpeg-dev \
         linux-headers \
         ninja
 
-RUN pip install numpy==1.18.0
+RUN pip install numpy
 
 WORKDIR /
 ENV OPENCV_VERSION="4.1.2"
@@ -23,26 +26,29 @@ RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip \
 && unzip ${OPENCV_VERSION}.zip \
 && rm -f ${OPENCV_VERSION}.zip
 
-RUN mkdir /opencv-${OPENCV_VERSION}/cmake_binary \
-&& cd /opencv-${OPENCV_VERSION}/cmake_binary \
-&& cmake -DBUILD_TIFF=ON \
-  -DBUILD_opencv_java=OFF \
-  -DWITH_CUDA=OFF \
-  -DWITH_OPENGL=ON \
-  -DWITH_OPENCL=ON \
-  -DWITH_IPP=ON \
-  -DWITH_TBB=ON \
-  -DWITH_EIGEN=ON \
-  -DWITH_V4L=ON \
-  -DBUILD_TESTS=OFF \
-  -DBUILD_PERF_TESTS=OFF \
-  -DCMAKE_BUILD_TYPE=RELEASE \
-  -DCMAKE_INSTALL_PREFIX=$(python3.7 -c "import sys; print(sys.prefix)") \
-  -DPYTHON_EXECUTABLE=$(which python3.7) \
-  -DPYTHON_INCLUDE_DIR=$(python3.7 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
-  -DPYTHON_PACKAGES_PATH=$(python3.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
-  .. \
-&& make -j$(nproc) 
+RUN mkdir /opencv-${OPENCV_VERSION}/build \
+&& cd /opencv-${OPENCV_VERSION}/build \
+&& cmake \
+      -D CMAKE_BUILD_TYPE=RELEASE \
+      -D WITH_FFMPEG=NO \
+      -D WITH_IPP=NO \
+      -D WITH_OPENEXR=NO \
+      -D WITH_TBB=YES \
+      -D BUILD_EXAMPLES=NO \
+      -D BUILD_ANDROID_EXAMPLES=NO \
+      -D INSTALL_PYTHON_EXAMPLES=NO \
+      -D BUILD_DOCS=NO \
+      -D BUILD_opencv_python2=NO \
+      -D BUILD_opencv_python3=ON \
+      -D BUILD_TESTS=OFF \
+      -D BUILD_PERF_TESTS=OFF \
+#      -D CMAKE_INSTALL_PREFIX=$(python3.7 -c "import sys; print(sys.prefix)") \
+#      -D PYTHON_EXECUTABLE=$(which python3.7) \
+#      -D PYTHON_INCLUDE_DIR=$(python3.7 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+#      -D PYTHON_PACKAGES_PATH=$(python3.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
+      -G Ninja .. \
+&& ninja
+#&& make -j$(nproc) 
 
 RUN find /opencv-${OPENCV_VERSION}/ | grep setup.py
 RUN find /opencv-${OPENCV_VERSION}/ -name \*.so 
@@ -50,12 +56,16 @@ RUN find /opencv-${OPENCV_VERSION}/ -name \*.so
 WORKDIR /opencv-${OPENCV_VERSION}/modules/python/package/
 RUN python setup.py bdist_wheel
 
-RUN wget https://github.com/evdcush/TensorFlow-wheels/releases/download/tf-1.13.1-py37-gpu-10.0/tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl -o /tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl
+RUN wget https://github.com/evdcush/TensorFlow-wheels/releases/download/tf-1.13.1-py37-gpu-10.0/tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl -O /tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl
 
 # Copy data
 RUN mv /opencv-${OPENCV_VERSION}/modules/python/package/dist/opencv-${OPENCV_VERSION}-py3-none-any.whl /opencv_python-${OPENCV_VERSION}-py3-none-any.whl
+COPY opencv_python-4.1.2.30-cp37-cp37m-manylinux1_x86_64.whl /
 COPY run.sh /
 RUN chmod a+x /run.sh
+
+#RUN rm -rf /opencv-${OPENCV_VERSION} \
+#    && rm -rf /var/cache/apk/*
 
 WORKDIR /data
 CMD ["/run.sh"]
