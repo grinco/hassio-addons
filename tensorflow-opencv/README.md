@@ -4,6 +4,8 @@ OpenCV Installer for Home Assistant (amd64 only)
 
 ## About
 
+!!! PLEASE DO NOT USE THIS ADDON. IT'S STILL NOT WORKING!!!
+
 This add-on is an OpenCV installer for use with amd64 hassio installs.  It enables the use of OpenCV for the TensorFlow image processing component.
 
 ## Installation

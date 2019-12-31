@@ -13,20 +13,22 @@ if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies ${PYPI}; the
     exit 1
 fi
 
-echo "[Info] Install TensorFlow into deps"
+#echo "[Info] Install TensorFlow into deps"
 # shellcheck disable=SC2086
-if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies /tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl; then
-    echo "[Error] Can't install TensorFlow package!"
-    exit 1
-fi
+#if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies /tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl; then
+#    echo "[Error] Can't install TensorFlow package!"
+#    exit 1
+#fi
 
 echo "[Info] Install OpenCV into deps"
 # shellcheck disable=SC2086
-if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies /opencv_python-4.1.2-py3-none-any.whl; then
-    echo "[Error] Can't install OpenCV package!"
-    exit 1
-fi
+#if ! pip3 install --user --no-cache-dir --prefix= --no-dependencies /opencv_python-4.1.2-py3-none-any.whl; then
+#    echo "[Error] Can't install OpenCV package!"
+#    exit 1
+#fi
 
-cp /opencv-4.1.2/build/lib/python3/cv2.cpython-37m-x86_64-linux-gnu.so /config/deps/lib/python3.7/site-packages/cv2.so 
+cp /cv2.so /config/deps/lib/python3.7/site-packages/cv2/cv2.so
+#mkdir /config/deps/lib/python3.7/site-packages/cv2/.libs/
+
 
 echo "[INFO] OpenCV is installed and ready for use"

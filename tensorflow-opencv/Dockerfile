@@ -53,19 +53,21 @@ RUN mkdir /opencv-${OPENCV_VERSION}/build \
 RUN find /opencv-${OPENCV_VERSION}/ | grep setup.py
 RUN find /opencv-${OPENCV_VERSION}/ -name \*.so 
 
-WORKDIR /opencv-${OPENCV_VERSION}/modules/python/package/
-RUN python setup.py bdist_wheel
+RUN mv /opencv-4.1.2/build/lib/python3/cv2.cpython-37m-x86_64-linux-gnu.so /cv2.so
 
-RUN wget https://github.com/evdcush/TensorFlow-wheels/releases/download/tf-1.13.1-py37-gpu-10.0/tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl -O /tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl
+#WORKDIR /opencv-${OPENCV_VERSION}/modules/python/package/
+#RUN python setup.py bdist_wheel
+
+RUN wget https://github.com/AfsmNGhr/alpine-tensorflow/releases/download/tensorflow-1.13.2/tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl -O tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl
 
 # Copy data
-RUN mv /opencv-${OPENCV_VERSION}/modules/python/package/dist/opencv-${OPENCV_VERSION}-py3-none-any.whl /opencv_python-${OPENCV_VERSION}-py3-none-any.whl
-COPY opencv_python-4.1.2.30-cp37-cp37m-manylinux1_x86_64.whl /
+#RUN mv /opencv-${OPENCV_VERSION}/modules/python/package/dist/opencv-${OPENCV_VERSION}-py3-none-any.whl /opencv_python-${OPENCV_VERSION}-py3-none-any.whl
+#COPY opencv_python-4.1.2.30-cp37-cp37m-manylinux1_x86_64.whl /
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-#RUN rm -rf /opencv-${OPENCV_VERSION} \
-#    && rm -rf /var/cache/apk/*
+RUN rm -rf /opencv-${OPENCV_VERSION} \
+    && rm -rf /var/cache/apk/*
 
 WORKDIR /data
 CMD ["/run.sh"]
