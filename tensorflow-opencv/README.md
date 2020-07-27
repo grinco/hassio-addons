@@ -1,12 +1,12 @@
-# Hass.io Add-on: OpenCV Installer
+# Hass.io Add-on: TensorFlow / OpenCV Installer
 
-OpenCV Installer for Home Assistant (amd64 only)
+TensorFlow / OpenCV Installer for Home Assistant (amd64 only)
 
 ## About
 
-!!! PLEASE DO NOT USE THIS ADDON. IT'S STILL NOT WORKING!!!
+!!! THIS ADDON IS CURRENTLY ONLY ABLE TO INSTALL TENSFORLOW ON HOME ASSISTANT RUNNING PYTHON 3.7 !!!
 
-This add-on is an OpenCV installer for use with amd64 hassio installs.  It enables the use of OpenCV for the TensorFlow image processing component.
+This add-on is a TensorFlow and OpenCV installer for use with amd64 hassio installs.  It enables the use of OpenCV for the TensorFlow image processing component.
 
 ## Installation
 

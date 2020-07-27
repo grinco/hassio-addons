@@ -18,7 +18,7 @@ RUN apk update && \
         linux-headers \
         ninja
 
-RUN pip install numpy
+RUN pip3.7 install numpy
 
 WORKDIR /
 ENV OPENCV_VERSION="4.1.2"
@@ -43,7 +43,7 @@ RUN mkdir /opencv-${OPENCV_VERSION}/build \
       -D BUILD_TESTS=OFF \
       -D BUILD_PERF_TESTS=OFF \
 #      -D CMAKE_INSTALL_PREFIX=$(python3.7 -c "import sys; print(sys.prefix)") \
-#      -D PYTHON_EXECUTABLE=$(which python3.7) \
+#      -D PYTHON_EXECUTABLE=$(which python3.8) \
 #      -D PYTHON_INCLUDE_DIR=$(python3.7 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
 #      -D PYTHON_PACKAGES_PATH=$(python3.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
       -G Ninja .. \
@@ -53,16 +53,18 @@ RUN mkdir /opencv-${OPENCV_VERSION}/build \
 RUN find /opencv-${OPENCV_VERSION}/ | grep setup.py
 RUN find /opencv-${OPENCV_VERSION}/ -name \*.so 
 
-RUN mv /opencv-4.1.2/build/lib/python3/cv2.cpython-37m-x86_64-linux-gnu.so /cv2.so
+RUN cp /opencv-${OPENCV_VERSION}/build/lib/python3/cv2.cpython-37m-x86_64-linux-gnu.so /cv2.so
 
-#WORKDIR /opencv-${OPENCV_VERSION}/modules/python/package/
-#RUN python setup.py bdist_wheel
-
-RUN wget https://github.com/AfsmNGhr/alpine-tensorflow/releases/download/tensorflow-1.13.2/tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl -O tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl
+WORKDIR /opencv-${OPENCV_VERSION}/modules/python/package/
+RUN python setup.py bdist_wheel
+RUN find /opencv-${OPENCV_VERSION}/ -name \*.whl
 
 # Copy data
-#RUN mv /opencv-${OPENCV_VERSION}/modules/python/package/dist/opencv-${OPENCV_VERSION}-py3-none-any.whl /opencv_python-${OPENCV_VERSION}-py3-none-any.whl
-#COPY opencv_python-4.1.2.30-cp37-cp37m-manylinux1_x86_64.whl /
+RUN mv /opencv-${OPENCV_VERSION}/modules/python/package/dist/opencv-${OPENCV_VERSION}-py3-none-any.whl /opencv_python-${OPENCV_VERSION}-py3-none-any.whl
+
+# Pull tensorflow
+RUN wget https://github.com/AfsmNGhr/alpine-tensorflow/releases/download/tensorflow-1.13.2/tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl -O /tensorflow-1.13.2-cp37-cp37m-linux_x86_64.whl
+
 COPY run.sh /
 RUN chmod a+x /run.sh
 
